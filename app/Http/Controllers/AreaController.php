@@ -2,30 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Http\Request;
 class AreaController extends Controller
 {
-    public function index()   //http://api.codersfree.test/v1/categories?included=posts
+    private function fetchDataFromApi($url)
     {
-        $url = rtrim((string) env('URL_SERVER_API'), '/') . '/areas';
-        $response = Http::acceptJson()->get($url);
-        $response->throw();
+        $response = Http::get($url);
+        return $response->json();
+    }
 
-        $areas = $response->json();
-        if (is_array($areas) && array_key_exists('data', $areas)) {
-            $areas = $areas['data'];
-        }
+   public function index()   //http://api.codersfree.test/v1/categories?included=posts
+    {
 
-        $areasLoadError = ! is_array($areas);
-        if ($areasLoadError) {
-            Log::warning('The areas API returned an unexpected response.', [
-                'status' => $response->status(),
-            ]);
-            $areas = [];
-        }
+        $url = env('URL_SERVER_API');
 
-        return view('areas.index', compact('areas', 'areasLoadError'));
+        $areas = $this->fetchDataFromApi($url . '/areas');
+        // return $categories;
+        return view('areas.index', compact('areas'));
+    }
+        public function show($id)
+    {
+
+        $url = env('URL_SERVER_API');
+
+        $category = $this->fetchDataFromApi($url . '/categories/' . $id);
+
+        return view('categories.show', compact('category'));
+    }
+    public function store(Request $request)
+    {
+        $url = env('URL_SERVER_API');
+
+        Http::post($url . '/categories', $request->all());
+
+        return redirect()->route('categories.index');
+    }
+   public function edit($id)
+    {
+        $url = env('URL_SERVER_API');
+        $category = $this->fetchDataFromApi($url . '/categories/' . $id);
+        return view('categories.edit', compact('category'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $url = env('URL_SERVER_API');
+
+        Http::put($url . '/categories/' . $id, $request->all());
+
+        return redirect()->route('categories.index');
     }
 }

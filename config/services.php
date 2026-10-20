@@ -2,6 +2,10 @@
 
 return [
 
+    'adminsena_api' => [
+        'url' => env('URL_SERVER_API'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
