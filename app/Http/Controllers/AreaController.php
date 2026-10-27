@@ -22,7 +22,7 @@ class AreaController extends Controller
         $url = env('URL_SERVER_API');
 
         $areas = $this->fetchDataFromApi($url . '/areas');
-        // return $categories;
+
         return view('areas.index', compact('areas'));
     }
     public function show($id)
@@ -35,28 +35,31 @@ class AreaController extends Controller
         return view('areas.show', compact('area'));
     }
 
-   public function create()
+    public function create()
     {
         $url = env('URL_SERVER_API');
-        $posts = Http::get($url . '/posts')->json();
+        $areas = Http::get($url . '/areas')->json();
 
-        return view('areas.create', compact('posts'));
+        return view('areas.create', compact('areas'));
     }
+
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|max:255',
+            'name' => 'required|string|max:255',
+            'imagen' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $url = env('URL_SERVER_API');
 
+        $file = $request->file('imagen');
 
-        $response = Http::post($url . '/areas', ['name' => $request->name]);
+        $response = Http::attach('imagen',file_get_contents($file->getRealPath()),$file->getClientOriginalName())
+        ->post(env('URL_SERVER_API') . '/areas',['name' => $request->name,]);
 
         return redirect()->route('areas.index');
     }
-
     public function edit($id)
     {
         $url = env('URL_SERVER_API');
@@ -79,4 +82,5 @@ class AreaController extends Controller
         Http::delete($url . '/areas/' . $id);
         return redirect()->route('areas.index');
     }
+
 }

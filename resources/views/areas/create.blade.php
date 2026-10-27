@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Crear Categoria</h1>
+    <h1>Crear Area</h1>
 
-    <form action="{{ route('area.store') ,$area['name']}}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('areas.store') }}" method="POST" enctype="multipart/form-data">
 
         @csrf
 
@@ -12,7 +12,41 @@
             <br>
             <input type="text" name="name">
         </label>
-        <br>
+        <br><br>
+        <div class="mb-3">
+            <label class="form-label">Imagen</label>
+            <input type="file" name="imagen" class="form-control" accept="image/*">
+        </div>
+        {{-- <div class="mb-3">
+                <label for="post_id" class="form-label">Seleccionar publicación</label>
+                <br><br>
+                <select name="post_id" id="post_id" class="form-select">
+                    <option value="">Seleccione una publicación</option>
+
+                    @foreach ($posts as $post)
+                        <option value="{{ $post['id'] }}">
+                            {{ $post['name'] }}
+                        </option>
+                    @endforeach
+                </select>
+         <div class="mb-3">
+                <label class="form-label">Imagen</label>
+                <input type="file" name="imagen" class="form-control" accept="image/*" required>
+            </div>
+            <div class="mb-3">
+                <label for="post_id" class="form-label">Seleccionar publicación</label>
+                <br><br>
+                <select name="post_id" id="post_id" class="form-select">
+                    <option value="">Seleccione una publicación</option>
+
+                    @foreach ($posts as $post)
+                        <option value="{{ $post['id'] }}">
+                            {{ $post['name'] }}
+                        </option>
+                    @endforeach
+                </select>
+            </div> --}}
+
         <button type="submit" class="btn btn-outline-success btn-sm">Enviar Formulario:</button>
         <br><br>
     </form>

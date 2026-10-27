@@ -18,13 +18,14 @@
                     <br><br>
                 </div>
                 <div>
-                    <a href="{{ route('area.create') }}" class="btn btn-outline-success btn-sm">Nueva Area</a>
+                    <a href="{{ route('areas.create') }}" class="btn btn-outline-success btn-sm">Nueva Area</a>
                     <br><br>
                 </div>
                 @foreach ($areas as $area)
                     <tr>
                         <td>{{ $area['id'] }}</td>
                         <td>{{ $area['name'] }}</td>
+                        <td><img src="{{ $area['imagen_url'] }}" alt="{{ $area['name'] }}" width="100">
                         </td>
                         <td>
                             <a href="{{ route('areas.show', $area['id']) }}" class="btn btn-info btn-sm">Ver más</a>
