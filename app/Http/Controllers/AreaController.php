@@ -4,28 +4,77 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class AreaController extends Controller
 {
+    private function fetchDataFromApi($url)
+    {
+        $response = Http::get($url);
+        return $response->json();
+    }
+
     public function index()   //http://api.codersfree.test/v1/categories?included=posts
     {
-        $url = rtrim((string) env('URL_SERVER_API'), '/') . '/areas';
-        $response = Http::acceptJson()->get($url);
-        $response->throw();
 
-        $areas = $response->json();
-        if (is_array($areas) && array_key_exists('data', $areas)) {
-            $areas = $areas['data'];
-        }
+        $url = env('URL_SERVER_API');
 
-        $areasLoadError = ! is_array($areas);
-        if ($areasLoadError) {
-            Log::warning('The areas API returned an unexpected response.', [
-                'status' => $response->status(),
-            ]);
-            $areas = [];
-        }
+        $areas = $this->fetchDataFromApi($url . '/areas');
+        // return $categories;
+        return view('areas.index', compact('areas'));
+    }
+    public function show($id)
+    {
 
-        return view('areas.index', compact('areas', 'areasLoadError'));
+        $url = env('URL_SERVER_API');
+
+        $area = $this->fetchDataFromApi($url . '/areas/' . $id);
+
+        return view('areas.show', compact('area'));
+    }
+
+   public function create()
+    {
+        $url = env('URL_SERVER_API');
+        $posts = Http::get($url . '/posts')->json();
+
+        return view('areas.create', compact('posts'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+        ]);
+
+        $url = env('URL_SERVER_API');
+
+
+        $response = Http::post($url . '/areas', ['name' => $request->name]);
+
+        return redirect()->route('areas.index');
+    }
+
+    public function edit($id)
+    {
+        $url = env('URL_SERVER_API');
+        $area = $this->fetchDataFromApi($url . '/areas/' . $id);
+        return view('areas.edit', compact('area'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $url = env('URL_SERVER_API');
+
+        Http::put($url . '/areas/' . $id, $request->all());
+
+        return redirect()->route('areas.index');
+    }
+
+    public function destroy($id)
+    {
+        $url = env('URL_SERVER_API');
+        Http::delete($url . '/areas/' . $id);
+        return redirect()->route('areas.index');
     }
 }
