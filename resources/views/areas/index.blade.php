@@ -21,7 +21,8 @@
                     <a href="{{ route('areas.create') }}" class="btn btn-outline-success btn-sm">Nueva Area</a>
                     <br><br>
                 </div>
-                @foreach ($areas as $area)
+            @if ($areas != null)
+@foreach ($areas as $area)
                     <tr>
                         <td>{{ $area['id'] }}</td>
                         <td>{{ $area['name'] }}</td>
@@ -43,6 +44,11 @@
                         </td>
                     </tr>
                 @endforeach
+
+            @else
+<h1>No hay Areas creadas</h1>
+            @endif
+
             </tbody>
         </table>
     </div>
